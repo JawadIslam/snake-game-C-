@@ -9,7 +9,7 @@ It works with raylib version 5.0. Tested on both Windows 10 and Windows 11.
 3. Press F5 on the keyboard to compile and run the program.
 
 # What's changed
-The template now uses folders for better organizion of the files. So, all the source code now lives in the src folder.
+The template now uses folders for better organizion of the files. So, all the source code now lives in the src folder.Thanks
 
 # Video Tutorial
 

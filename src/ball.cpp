@@ -1,6 +1,6 @@
 #include "ball.h"
 #include <raylib.h>
-
+// ball game
 Ball::Ball() 
     : x(100)
     , y(100)

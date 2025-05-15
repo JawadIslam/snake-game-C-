@@ -56,14 +56,14 @@ public:
         float x = GetRandomValue(0, cellCount - 1);
         float y = GetRandomValue(0, cellCount - 1);
 
-        return Vector2{x, y};
+        return Vector2{x, y}; 
     };
 };
 
 class snake
 {
 public:
-    deque<Vector2> body = {Vector2{6, 9}, Vector2{5, 9}, Vector2{4, 9}};
+    deque<Vector2> body = {Vector2{6, 9}, Vector2{5, 9}, Vector2{4, 9} };
     Vector2 direction = {1, 0};
 
     void Draw()
@@ -96,7 +96,6 @@ public:
 
     void Draw()
     {
-
         myfood.Draw();
         mysnake.Draw();
     };
@@ -110,11 +109,13 @@ public:
     void checkCollision(){
         if( Vector2Equals(mysnake.body[0], myfood.position) ){
             cout << "foodeatten" << endl;
-            myfood.Draw();
+            myfood.position = myfood.GetRandomPosition();
+            mysnake.body.push_front(Vector2{5,9});
         };
     };
 };
 
+ 
 int main()
 {
     InitWindow(cellSize * cellCount, cellSize * cellCount, "Retro Snake");
@@ -127,7 +128,7 @@ int main()
 
         BeginDrawing();
 
-        if (eventtriggered(0.2))
+        if (eventtriggered(0.4))
         {
             mygame.update();
         };

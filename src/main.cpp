@@ -12,9 +12,23 @@ int cellCount = 25;
 
 int lastupdateTime = 0;
 
-bool eventtriggered(bool enterval)
+bool ElementInDeque(Vector2 element, deque<Vector2> deque)
 {
 
+    for (unsigned int i = 0; i < deque.size(); i++)
+    {
+
+        if (Vector2Equals(deque[i], element))
+        {
+            return true;
+        };
+    }
+
+    return false;
+}
+
+bool eventtriggered(bool enterval)
+{
     double currentTime = GetTime();
 
     if (currentTime - lastupdateTime > enterval)
@@ -30,15 +44,14 @@ class food
 {
 public:
     Vector2 position;
-
     Texture2D texture;
 
-    food()
+    food(deque<Vector2> snakebody)
     {
         Image image = LoadImage("food.png");
         texture = LoadTextureFromImage(image);
         UnloadImage(image);
-        position = GetRandomPosition();
+        position = GetRandomPosition(snakebody);
     }
     ~food()
     {
@@ -50,22 +63,33 @@ public:
         DrawTexture(texture, position.x * cellSize, position.y * cellSize, WHITE);
     };
 
-    Vector2 GetRandomPosition()
+    Vector2 GenerateRandomcell()
     {
-
         float x = GetRandomValue(0, cellCount - 1);
         float y = GetRandomValue(0, cellCount - 1);
 
-        return Vector2{x, y}; 
+        return Vector2{x, y};
+    }
+
+    Vector2 GetRandomPosition(deque<Vector2> snakeBody)
+    {
+        Vector2 position = GenerateRandomcell();
+
+        while (ElementInDeque(position, snakeBody))
+        {
+            position = GenerateRandomcell();
+        };
+
+        return position;
     };
 };
 
 class snake
 {
 public:
-    deque<Vector2> body = {Vector2{6, 9}, Vector2{5, 9}, Vector2{4, 9} };
+    deque<Vector2> body = {Vector2{6, 9}, Vector2{5, 9}, Vector2{4, 9}};
     Vector2 direction = {1, 0};
-
+    bool addSegment = false;
     void Draw()
     {
 
@@ -82,8 +106,19 @@ public:
 
     void update()
     {
-        body.pop_back();
+
         body.push_front(Vector2Add(body[0], direction));
+
+        if (addSegment == true)
+        {
+
+            addSegment = false;
+        }
+
+        else
+        {
+            body.pop_back();
+        }
     };
 };
 
@@ -91,8 +126,8 @@ class game
 {
 
 public:
-    food myfood = food();
     snake mysnake = snake();
+    food myfood = food(mysnake.body);
 
     void Draw()
     {
@@ -106,16 +141,17 @@ public:
         checkCollision();
     };
 
-    void checkCollision(){
-        if( Vector2Equals(mysnake.body[0], myfood.position) ){
+    void checkCollision()
+    {
+        if (Vector2Equals(mysnake.body[0], myfood.position))
+        {
             cout << "foodeatten" << endl;
-            myfood.position = myfood.GetRandomPosition();
-            mysnake.body.push_front(Vector2{5,9});
+            myfood.position = myfood.GetRandomPosition(mysnake.body);
+            mysnake.addSegment = true;
         };
     };
 };
 
-//  commetn
 int main()
 {
     InitWindow(cellSize * cellCount, cellSize * cellCount, "Retro Snake");
@@ -128,7 +164,7 @@ int main()
 
         BeginDrawing();
 
-        if (eventtriggered(0.4))
+        if (eventtriggered(0.5))
         {
             mygame.update();
         };

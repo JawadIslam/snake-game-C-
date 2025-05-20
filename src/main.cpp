@@ -120,7 +120,9 @@ public:
             body.pop_back();
         }
     };
+
 };
+    
 
 class game
 {
@@ -139,6 +141,7 @@ public:
     {
         mysnake.update();
         checkCollision();
+        CheckCollisionWithedge();
     };
 
     void checkCollision()
@@ -150,13 +153,28 @@ public:
             mysnake.addSegment = true;
         };
     };
+
+    void CheckCollisionWithedge(){
+        if(mysnake.body[0].x == cellSize || mysnake.body[0].x == -1){
+           GameOver();           
+
+        };
+        if(mysnake.body[0].y == cellSize || mysnake.body[0].y == -1){
+            GameOver();
+        };
+    };
+     void GameOver(){
+       cout << "game over " << endl;
+     
+     };
+
 };
 
 int main()
 {
     InitWindow(cellSize * cellCount, cellSize * cellCount, "Retro Snake");
 
-    SetTargetFPS(60);
+    SetTargetFPS(60); 
     game mygame = game();
     while (WindowShouldClose() == false)
     {

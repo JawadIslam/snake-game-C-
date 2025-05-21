@@ -186,7 +186,7 @@ int main()
         {
             mygame.update();
         };
-
+// update
         if (IsKeyPressed(KEY_UP) && mygame.mysnake.direction.y != 1)
         {
             mygame.mysnake.direction = {0, -1};

@@ -7,9 +7,10 @@ using namespace std;
 
 Color green = {173, 204, 96, 255};
 Color darkGreen = {43, 51, 24, 255};
+
 int cellSize = 30;
 int cellCount = 25;
-
+bool running;
 int lastupdateTime = 0;
 
 bool ElementInDeque(Vector2 element, deque<Vector2> deque)
@@ -121,6 +122,12 @@ public:
         }
     };
 
+
+     void Reset(){
+        body={Vector2{6,9} ,Vector2{5,9} , Vector2{4,9}};
+        direction = {1,0};
+    
+    }
 };
     
 
@@ -130,20 +137,19 @@ class game
 public:
     snake mysnake = snake();
     food myfood = food(mysnake.body);
-
+    bool running = false;
     void Draw()
     {
         myfood.Draw();
         mysnake.Draw();
     };
 
-    void update()
-    {
-        mysnake.update();
+    void update(){
+    if(running){
         checkCollision();
         CheckCollisionWithedge();
     };
-
+};
     void checkCollision()
     {
         if (Vector2Equals(mysnake.body[0], myfood.position))
@@ -163,9 +169,11 @@ public:
             GameOver();
         };
     };
+
      void GameOver(){
-       cout << "game over " << endl;
-     
+      mysnake.Reset(); 
+      myfood.position = myfood.GetRandomPosition(mysnake.body);
+      running = false;
      };
 
 };
@@ -204,10 +212,12 @@ int main()
         if (IsKeyPressed(KEY_RIGHT) && mygame.mysnake.direction.x != -1)
         {
             mygame.mysnake.direction = {1, 0};
+         
         };
         ClearBackground(green);
 
         mygame.Draw();
+
 
         EndDrawing();
     };

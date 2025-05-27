@@ -122,6 +122,7 @@ public:
         }
     };
 
+// update
 
      void Reset(){
         body={Vector2{6,9} ,Vector2{5,9} , Vector2{4,9}};
@@ -198,11 +199,13 @@ int main()
         if (IsKeyPressed(KEY_UP) && mygame.mysnake.direction.y != 1)
         {
             mygame.mysnake.direction = {0, -1};
+            mygame.runnig = true;
         };
 
         if (IsKeyPressed(KEY_DOWN) && mygame.mysnake.direction.y != -1)
         {
             mygame.mysnake.direction = {0, 1};
+            game.running = true
         };
         if (IsKeyPressed(KEY_LEFT) && mygame.mysnake.direction.x != 1)
         {

@@ -122,7 +122,7 @@ public:
         }
     };
 
-// update
+
 
      void Reset(){
         body={Vector2{6,9} ,Vector2{5,9} , Vector2{4,9}};
@@ -131,6 +131,8 @@ public:
     }
 };
     
+
+
 
 class game
 {

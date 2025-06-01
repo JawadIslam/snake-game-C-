@@ -3,14 +3,14 @@
 #include <deque>
 #include <raymath.h>
 using namespace std;
-//  third commit
 
 Color green = {173, 204, 96, 255};
 Color darkGreen = {43, 51, 24, 255};
 
 int cellSize = 30;
 int cellCount = 25;
-bool running;
+int offset = 75;
+
 int lastupdateTime = 0;
 
 bool ElementInDeque(Vector2 element, deque<Vector2> deque)
@@ -61,7 +61,7 @@ public:
 
     void Draw()
     {
-        DrawTexture(texture, position.x * cellSize, position.y * cellSize, WHITE);
+        DrawTexture(texture, offset + position.x * cellSize, offset + position.y * cellSize, WHITE);
     };
 
     Vector2 GenerateRandomcell()
@@ -91,6 +91,7 @@ public:
     deque<Vector2> body = {Vector2{6, 9}, Vector2{5, 9}, Vector2{4, 9}};
     Vector2 direction = {1, 0};
     bool addSegment = false;
+
     void Draw()
     {
 
@@ -100,7 +101,8 @@ public:
             float x = body[i].x;
             float y = body[i].y;
 
-            Rectangle segment = Rectangle{x * cellSize, y * cellSize, (float)cellSize, (float)cellSize};
+            Rectangle segment = Rectangle{offset + x * cellSize, offset + y * cellSize, (float)cellSize, (float)cellSize};
+
             DrawRectangleRounded(segment, 0.5, 6, darkGreen);
         };
     };
@@ -122,17 +124,12 @@ public:
         }
     };
 
-
-
-     void Reset(){
-        body={Vector2{6,9} ,Vector2{5,9} , Vector2{4,9}};
-        direction = {1,0};
-    
+    void Reset()
+    {
+        body = {Vector2{6, 9}, Vector2{5, 9}, Vector2{4, 9}};
+        direction = {1, 0};
     }
 };
-    
-
-
 
 class game
 {
@@ -140,52 +137,60 @@ class game
 public:
     snake mysnake = snake();
     food myfood = food(mysnake.body);
-    bool running = false;
+    bool running = true;
+    int score = 0;
+
     void Draw()
     {
         myfood.Draw();
         mysnake.Draw();
     };
 
-    void update(){
-    if(running){
-        checkCollision();
-        CheckCollisionWithedge();
+    void update()
+    {
+        if (running)
+        {
+            mysnake.update();
+            checkCollision();
+            CheckCollisionWithedge();
+        };
     };
-};
     void checkCollision()
     {
         if (Vector2Equals(mysnake.body[0], myfood.position))
         {
             cout << "foodeatten" << endl;
+            score++;
             myfood.position = myfood.GetRandomPosition(mysnake.body);
             mysnake.addSegment = true;
         };
     };
 
-    void CheckCollisionWithedge(){
-        if(mysnake.body[0].x == cellSize || mysnake.body[0].x == -1){
-           GameOver();           
-
+    void CheckCollisionWithedge()
+    {
+        if (mysnake.body[0].x == cellCount || mysnake.body[0].x < 0)
+        {
+            GameOver();
         };
-        if(mysnake.body[0].y == cellSize || mysnake.body[0].y == -1){
+        if (mysnake.body[0].y == cellCount || mysnake.body[0].y < 0)
+        {
             GameOver();
         };
     };
 
-     void GameOver(){
-      mysnake.Reset(); 
-      myfood.position = myfood.GetRandomPosition(mysnake.body);
-      running = false;
-     };
-
+    void GameOver()
+    {
+        mysnake.Reset();
+        myfood.position = myfood.GetRandomPosition(mysnake.body);
+        running = false;
+    };
 };
 
 int main()
 {
-    InitWindow(cellSize * cellCount, cellSize * cellCount, "Retro Snake");
+    InitWindow(2 * offset + cellSize * cellCount, 2 * offset + cellSize * cellCount, "Retro Snake");
 
-    SetTargetFPS(60); 
+    SetTargetFPS(50);
     game mygame = game();
     while (WindowShouldClose() == false)
     {
@@ -193,37 +198,40 @@ int main()
 
         BeginDrawing();
 
-        if (eventtriggered(0.5))
+        if (eventtriggered(0.8))
         {
             mygame.update();
         };
-// update
+        // update
         if (IsKeyPressed(KEY_UP) && mygame.mysnake.direction.y != 1)
         {
             mygame.mysnake.direction = {0, -1};
-            mygame.runnig = true;
+            mygame.running = true;
         };
 
         if (IsKeyPressed(KEY_DOWN) && mygame.mysnake.direction.y != -1)
         {
             mygame.mysnake.direction = {0, 1};
-            game.running = true
+            mygame.running = true;
         };
         if (IsKeyPressed(KEY_LEFT) && mygame.mysnake.direction.x != 1)
         {
             mygame.mysnake.direction = {-1, 0};
+            mygame.running = true;
         };
 
         if (IsKeyPressed(KEY_RIGHT) && mygame.mysnake.direction.x != -1)
         {
             mygame.mysnake.direction = {1, 0};
-         
+            mygame.running = true;
         };
         ClearBackground(green);
+        //  DrawRectangleLinesEx(Rectangle{(float)offset - 5 ,(float)offset - 5 ,(float)cellSize* cellCount + 10 , (float)cellSize * cellCount + 10 }, 2, darkGreen);
 
+        DrawRectangleLinesEx(Rectangle{(float)offset - 5, (float)offset - 5, (float)cellSize * cellCount + 10, (float)cellSize * cellCount + 10}, 5, darkGreen);
+        DrawText("Retro Snake", offset - 5, 20, 40, darkGreen);
         mygame.Draw();
-
-
+        DrawText(TextFormat("%i", mygame.score), offset - 5, offset + cellSize * cellCount + 10, 40, darkGreen);
         EndDrawing();
     };
 
